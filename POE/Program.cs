@@ -10,7 +10,6 @@ namespace POE_PART1
           
             Recipe recipe = new Recipe();
             recipe.Menu();
-            
         }
     }
 
@@ -20,37 +19,42 @@ namespace POE_PART1
         private string[] ingredients;
         private string[] steps;
 
-        // Constructor
         public Recipe()
         {
-            // Initialize arrays
             ingredients = new string[0];
             steps = new string[0];
         }
         public void Menu()
         {
             int choice = 0;
+            Console.WriteLine("Welcome to DoorNo's, the best recipe storage app ever made");
+            Console.WriteLine("Our goal is to help you  stop spending your hard earned money on takeways, and teach you how to cook.");
+
             Console.WriteLine("Enter 1 to enter a recipe\n" +
                               "Enter 2 to Display a recipe\n" +
                               "Enter 3 to Adjust the scale of the recipe");
             choice = Convert.ToInt16(Console.ReadLine());
-            if (choice == 1)
+            while (choice != 9)
             {
-                GetRecipe();
-            } else if (choice == 2) 
-            {
-                DisplayRecipe();
-            } else if (choice == 3)
-            {
-                ScaleRecipe();
-            }
-            
-            
-
-            
-            
+                if (choice == 1)
+                {
+                    GetRecipe();
+                }
+                else if (choice == 2)
+                {
+                    DisplayRecipe();
+                }
+                else if (choice == 3)
+                {
+                    ScaleRecipe();
+                }
+                else if (choice == 9)
+                {
+                    break;
+                }
+            } 
         }
-        // Method to get recipe details from the user
+        
         public void GetRecipe()
         {
             Console.WriteLine("Welcome to the recipe app");
@@ -92,8 +96,7 @@ namespace POE_PART1
                 steps[i] = Console.ReadLine();
             }
         }
-
-        // Method to display the full recipe
+    
         public void DisplayRecipe()
         {
             Console.WriteLine($"Recipe Name: {recipeName}");
@@ -109,37 +112,32 @@ namespace POE_PART1
             }
             Console.WriteLine();
         }
-
-        // Method to scale the recipe
+       
         public void ScaleRecipe()
         {
             Console.WriteLine("Enter the scale ");
             double factor = Convert.ToDouble(Console.ReadLine());
 
             Console.WriteLine($"Scaling recipe by a factor of {factor}...");
-            // Scale quantities of ingredients here
+            
         }
-
-        // Method to reset quantities to original
+       
         public void ResetQuantities()
         {
             Console.WriteLine("Resetting quantities to original...");
-            // Reset quantities of ingredients here
+            
         }
-
-        // Method to clear all data from the recipe and enter a new recipe
+  
         public void ClearRecipe()
         {
             Console.WriteLine("Clearing all data from the recipe...");
-            // Reset all fields to initial state
+            
             recipeName = "";
             ingredients = new string[0];
             steps = new string[0];
         }
     }
 }
-      
-
 //user enter details for 1 recipe in part 1
 // needs to store number of ingrediants
 // every ingreidant must have, name, quantity, and unit of measure
@@ -151,4 +149,3 @@ namespace POE_PART1
 // user can clear all data from the recipe and enter a new recipe 
 // only store in current memory, no txt document to store additonal info
 // store ingrediants and steps in array
-
