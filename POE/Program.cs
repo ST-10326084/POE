@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualBasic;
 using System.Numerics;
 
-namespace POE_PART1 
+namespace POE_PART1
 {
     class Program
     {
         private static void Main(string[] args)
         {
-          
+
             Recipe recipe = new Recipe();
             recipe.Menu();
         }
@@ -18,13 +18,13 @@ namespace POE_PART1
         private string recipeName;
         private string[] ingredients;
         private string[] steps;
-        string[] quantities;
+        double[] quantities;
 
         public Recipe()
         {
             ingredients = new string[0];
             steps = new string[0];
-            quantities = new string[0];
+            quantities = new double[0];
         }
         public void Menu()
         {
@@ -35,7 +35,7 @@ namespace POE_PART1
                 Console.WriteLine("Welcome to DoorNo's, the best recipe storage app ever made");
                 Console.WriteLine("Our goal is to help you stop spending your hard earned money on takeaways, and teach you how to cook.");
 
-                Console.WriteLine("Enter 1 to enter a recipe\n" +
+                Console.WriteLine("Enter 1 to Enter a recipe\n" +
                                   "Enter 2 to Display a recipe\n" +
                                   "Enter 3 to Adjust the scale of the recipe\n" +
                                   "Enter 4 to Clear all data and enter a new recipe\n" +
@@ -87,14 +87,36 @@ namespace POE_PART1
                 recipeName = Console.ReadLine();
             }
 
-            Console.WriteLine("List the ingredients in your recipe separated by a comma:");
-            string allIngredients = Console.ReadLine();
-            ingredients = allIngredients.Split(',');
+            // Prompt for ingredients and quantities
+            List<string> ingredientsList = new List<string>();
+            List<double> quantitiesList = new List<double>();
 
-            // Get quantities for each ingredient
-            Console.WriteLine("List the quantities for all ingredients separated by a comma(grams/ml:");
-            string allQuantities = Console.ReadLine();
-            quantities = allQuantities.Split(','); // needs to be an int, to scale it !!!
+            Console.WriteLine("Enter ingredients and quantities. Type 'done' when finished.");
+
+            while (true)
+            {
+                Console.Write("Ingredient: ");
+                string ingredient = Console.ReadLine();
+                if (string.Equals(ingredient, "done", StringComparison.OrdinalIgnoreCase))
+                {
+                    break;
+                }
+
+                Console.Write("Quantity (grams/ml): ");
+                if (!double.TryParse(Console.ReadLine(), out double quantity))
+                {
+                    Console.WriteLine("Invalid input for quantity. Please enter a valid number.");
+                    continue;
+                }
+
+                // Add the ingredient and its quantity to the lists
+                ingredientsList.Add(ingredient);
+                quantitiesList.Add(quantity);
+            }
+
+            // Convert lists to arrays
+            ingredients = ingredientsList.ToArray();
+            quantities = quantitiesList.ToArray();
 
             if (quantities.Length != ingredients.Length)
             {
@@ -131,40 +153,38 @@ namespace POE_PART1
             Console.WriteLine("Steps:");
             for (int i = 0; i < steps.Length; i++)
             {
-                Console.WriteLine(i+") "+steps[i]);
+                Console.WriteLine(i + ") " + steps[i]);
             }
             Console.WriteLine();
         }
 
         public void ScaleRecipe()
         {
-            // add menu here, to reset scale, and adjust it (0.5, 2 and 3) if statements or switch
-            Console.WriteLine("Enter the scale at which you would like to adjust the recipe too. ");
-            Console.WriteLine("Enter 1 for default scale (1)");
-            Console.WriteLine("Enter 2 for double scale (2)");
-            Console.WriteLine("Enter 3 for triple scale (3)");
-            Console.WriteLine("Enter 4 for half scale (0.5)");
-            //double factor = Convert.ToDouble(Console.ReadLine());
+            Console.WriteLine("Enter the scale at which you would like to adjust the recipe:");
+            Console.WriteLine("1 - Default scale (1)");
+            Console.WriteLine("2 - Double scale (2)");
+            Console.WriteLine("3 - Triple scale (3)");
+            Console.WriteLine("4 - Half scale (0.5)");
+            Console.WriteLine("5 - Reset scale to default (1)");
 
-
-            //Console.WriteLine($"Scaling recipe by a factor of {factor}...");
             try
             {
-                double factor = Convert.ToInt32(Console.ReadLine());
+                double factor = Convert.ToDouble(Console.ReadLine());
                 switch (factor)
                 {
                     case 1:
-                        
+                        // No scaling needed, already at default scale
                         break;
                     case 2:
-
+                        ScaleIngredients(2); // Double scale
                         break;
                     case 3:
-
+                        ScaleIngredients(3); // Triple scale
                         break;
                     case 4:
-
+                        ScaleIngredients(0.5); // Half scale
                         break;
+                    
                     default:
                         Console.WriteLine("Invalid choice. Please enter a valid option.");
                         break;
@@ -175,17 +195,21 @@ namespace POE_PART1
                 Console.WriteLine("Invalid input. Please enter a valid number.");
             }
         }
-       
-        public void ResetQuantities()
+
+        private void ScaleIngredients(double factor)
         {
-            Console.WriteLine("Resetting quantities to original...");
-            
+            for (int i = 0; i < quantities.Length; i++)
+            {
+                quantities[i] *= factor; // Scale each quantity
+            }
         }
-  
+
+        
+
         public void ClearRecipe()
         {
             Console.WriteLine("Clearing all data from the recipe...");
-            
+
             recipeName = "";
             ingredients = new string[0];
             steps = new string[0];
