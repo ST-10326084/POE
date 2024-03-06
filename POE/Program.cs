@@ -19,7 +19,7 @@ namespace POE_PART1
         public string[] Steps { get; set; }
         private double[] originalQuantities; // Keep original quantities for scaling
         public double[] Quantities { get; set; }
-        private bool recipeEntered = false;
+        private bool recipeEntered = false; // ensure user doesnt overwrite their recipe.
 
         public Recipe()
         {
@@ -131,7 +131,7 @@ namespace POE_PART1
             // Convert lists to arrays
             Ingredients = ingredientsList.ToArray();
             Quantities = quantitiesList.ToArray();
-            originalQuantities = Quantities.Clone() as double[];
+            originalQuantities = Quantities.Clone() as double[]; // store oringal values to be used for reset (scaling)
 
             if (Quantities.Length != Ingredients.Length)
             {
@@ -204,7 +204,7 @@ namespace POE_PART1
                         break;
                     case 5:
                         // Reset quantities to original values
-                        Quantities = originalQuantities.Clone() as double[];
+                        Quantities = originalQuantities.Clone() as double[]; // dont need duplicated reset
                         break;
                     default:
                         Console.WriteLine("Invalid choice. Please enter a valid option.");
@@ -238,6 +238,5 @@ namespace POE_PART1
 }
 
 // still needs to be done: 
-// apply string manipulation to solve a problem
 // automatic properties to solve a problem (scale? ) 
-// add a system so that if a user has entered a recipe, he cant enter another recipe before it has been cleared
+
