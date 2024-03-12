@@ -240,3 +240,6 @@ namespace POE_PART1
 // still needs to be done: 
 // automatic properties to solve a problem (scale? ) 
 
+
+// to add 
+// a system where it takes the grams/ ml and gives a answer such as 250ml/g = a cup, or where 25ml a table spoon, etc 
