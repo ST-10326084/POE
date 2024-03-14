@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using System.Numerics;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace POE_PART1
 {
@@ -34,7 +35,8 @@ namespace POE_PART1
 
             do
             {
-                Console.WriteLine("Welcome to DoorNo's, the best recipe storage app ever made");
+                Console.WriteLine("\x1b[34mWelcome to DoorNo's, the best recipe storage app ever made\x1b[0m");
+                //Console.WriteLine("Welcome to DoorNo's, the best recipe storage app ever made");
                 Console.WriteLine("Our goal is to help you stop spending your hard earned money on takeaways, and teach you how to cook.\n");
 
                 Console.WriteLine("Enter 1 to Enter a recipe\n" +
@@ -86,6 +88,7 @@ namespace POE_PART1
 
         public void GetRecipe()
         {
+            
             Console.WriteLine("\nWelcome to the recipe app");
             Console.WriteLine("On the free plan, you have 1 recipe slot");
 
@@ -99,7 +102,7 @@ namespace POE_PART1
             }
 
             // Prompt for ingredients and quantities
-            List<string> ingredientsList = new List<string>();
+            List<string> ingredientsList = new List<string>(); // using lists to simplify (could also have used ArrayLists
             List<double> quantitiesList = new List<double>();
 
             Console.WriteLine("Enter ingredients and quantities. Type 'done' when finished.");
@@ -108,12 +111,12 @@ namespace POE_PART1
             {
                 Console.Write("Ingredient: ");
                 string ingredient = Console.ReadLine();
-                if (string.Equals(ingredient, "done", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(ingredient, "done", StringComparison.OrdinalIgnoreCase)) // ignore case to ensure any variation of done works 
                 {
                     break;
                 }
 
-                Console.Write("Quantity (grams/ml): ");
+                Console.Write("Quantity (grams/ml): "); // here we need to make it so that a user can enter a number and specify the scale afterward. such as 1 cup, 3 teaspoons. etc
                 if (!double.TryParse(Console.ReadLine(), out double quantity))
                 {
                     Console.WriteLine("Invalid input for quantity. Please enter a valid number.");
@@ -157,7 +160,8 @@ namespace POE_PART1
 
         public void DisplayRecipe()
         {
-            Console.WriteLine("-------------------------------");
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.WriteLine("\x1b[34m-------------------------------\x1b[0m"); 
             Console.WriteLine($"Recipe Name: {RecipeName}");
             Console.WriteLine("Ingredients:");
 
@@ -172,7 +176,7 @@ namespace POE_PART1
                 Console.WriteLine(i + 1 + ") " + Steps[i]);
             }
             Console.WriteLine();
-            Console.WriteLine("-------------------------------");
+            Console.WriteLine("\x1b[34m-------------------------------\x1b[0m");
         }
 
         public void ScaleRecipe()
@@ -227,19 +231,29 @@ namespace POE_PART1
 
         public void ClearRecipe()
         {
-            Console.WriteLine("Clearing all data from the recipe...");
+            String choice;
+            Console.WriteLine("Are you sure you want to clear a recipe, type 'yes' to clear");
+            choice = Console.ReadLine();
+            choice = choice.ToLower();
+            if (choice == "yes")
+            {
+                Console.WriteLine("\u001b[32mAll data cleared from recipe.\n\u001b[0m");
+                // add a confirmation here to ensure they want to clear the text ( simple if 
 
-            RecipeName = "";
-            Ingredients = new string[0];
-            Steps = new string[0];
-            Quantities = new double[0]; // Reset quantities
+                RecipeName = "";
+                Ingredients = new string[0];
+                Steps = new string[0];
+                Quantities = new double[0]; // Reset quantities
+            } else
+            {
+                Console.WriteLine("\u001b[31mYour recipe was NOT cleared, enter 'yes' to clear\n\u001b[0m");
+            }
         }
     }
 }
 
 // still needs to be done: 
 // automatic properties to solve a problem (scale? ) 
-
 
 // to add 
 // a system where it takes the grams/ ml and gives a answer such as 250ml/g = a cup, or where 25ml a table spoon, etc 
