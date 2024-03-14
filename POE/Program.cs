@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace POE_PART1
@@ -160,7 +161,7 @@ namespace POE_PART1
 
         public void DisplayRecipe()
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            
             Console.WriteLine("\x1b[34m-------------------------------\x1b[0m"); 
             Console.WriteLine($"Recipe Name: {RecipeName}");
             Console.WriteLine("Ingredients:");
@@ -187,38 +188,43 @@ namespace POE_PART1
             Console.WriteLine("3 - Triple scale (3)");
             Console.WriteLine("4 - Half scale (0.5)");
             Console.WriteLine("5 - Reset scale to default (1)");
-
-            try
+            //if  need to add a system where if no recipe is entered, then no scaling options can be selected
+            if (recipeEntered == true)
             {
-                double factor = Convert.ToDouble(Console.ReadLine());
-                switch (factor)
+                try
                 {
-                    case 1:
-                        // Reset quantities to original values
-                        Quantities = originalQuantities.Clone() as double[];
-                        break;
-                    case 2:
-                        ScaleIngredients(2); // Double scale
-                        break;
-                    case 3:
-                        ScaleIngredients(3); // Triple scale
-                        break;
-                    case 4:
-                        ScaleIngredients(0.5); // Half scale
-                        break;
-                    case 5:
-                        // Reset quantities to original values
-                        Quantities = originalQuantities.Clone() as double[]; // dont need duplicated reset
-                        break;
-                    default:
-                        Console.WriteLine("Invalid choice. Please enter a valid option.");
-                        break;
+                    double factor = Convert.ToDouble(Console.ReadLine());
+                    switch (factor)
+                    {
+                        case 1:
+                            // Reset quantities to original values
+                            Quantities = originalQuantities.Clone() as double[];
+                            break;
+                        case 2:
+                            ScaleIngredients(2); // Double scale
+                            break;
+                        case 3:
+                            ScaleIngredients(3); // Triple scale
+                            break;
+                        case 4:
+                            ScaleIngredients(0.5); // Half scale
+                            break;
+                        case 5:
+                            // Reset quantities to original values
+                            Quantities = originalQuantities.Clone() as double[]; // dont need duplicated reset
+                            break;
+                        default:
+                            Console.WriteLine("Invalid choice. Please enter a valid option.");
+                            break;
+                    }
                 }
-            }
-            catch (FormatException)
-            {
-                Console.WriteLine("Invalid input. Please enter a valid number.");
-            }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid number.");
+                }
+            } else {
+                   Console.WriteLine("Enter a recipe before trying to scale it");
+                   }
         }
 
         private void ScaleIngredients(double factor)
@@ -252,8 +258,11 @@ namespace POE_PART1
     }
 }
 
-// still needs to be done: 
-// automatic properties to solve a problem (scale? ) 
+
 
 // to add 
+// priority developement: (top down)
 // a system where it takes the grams/ ml and gives a answer such as 250ml/g = a cup, or where 25ml a table spoon, etc 
+// automatic properties to solve a problem (scale? ) 
+// separate classes onto diffrent 'pages'
+// reference
