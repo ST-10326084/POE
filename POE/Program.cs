@@ -264,7 +264,8 @@ namespace POE_PART1
 }
 
 
-
+//read list
+// seperate into different classes ( different pages)
 // to add 
 // priority developement: (top down)
 // a system where it takes the grams/ ml and gives a answer such as 250ml/g = a cup, or where 25ml a table spoon, etc 
