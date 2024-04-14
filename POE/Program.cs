@@ -21,6 +21,7 @@ namespace POE_PART1
         public string[] Steps { get; set; }
         private double[] originalQuantities; // Keep original quantities for scaling
         public double[] Quantities { get; set; }
+        public string[] unitOfMeasure { get; set; }
         private bool recipeEntered = false; // ensure user doesnt overwrite their recipe.
 
         public Recipe()
@@ -28,6 +29,7 @@ namespace POE_PART1
             Ingredients = new string[0];
             Steps = new string[0];
             Quantities = new double[0];
+            unitOfMeasure = new String[0];
         }
 
         public void Menu()
@@ -89,7 +91,7 @@ namespace POE_PART1
 
         public void GetRecipe()
         {
-            
+
             Console.WriteLine("\nWelcome to the recipe app");
             Console.WriteLine("On the free plan, you have 1 recipe slot");
 
@@ -102,11 +104,26 @@ namespace POE_PART1
                 RecipeName = Console.ReadLine();
             }
 
+            // Get ingredients
+            getIngrediants();
+            Console.WriteLine("Ingredients entered. Press any key to continue...");
+            Console.ReadKey(true);
+
+            // Get steps
+            getSteps();
+            Console.WriteLine("Steps entered. Press any key to continue...");
+            Console.ReadKey(true);
+        }
+
+        public void getIngrediants()
+        {
+
             // Prompt for ingredients and quantities
             List<string> ingredientsList = new List<string>(); // using lists to simplify (could also have used ArrayLists
             List<double> quantitiesList = new List<double>();
+            List<string> unitOfMeasureList = new List<string>();
 
-            Console.WriteLine("Enter ingredients and quantities. Type 'done' when finished.");
+            Console.WriteLine("Enter ingredients and quantities and unit of measurement. Type 'done' in the ingrediant section when finished.");
 
             while (true)
             {
@@ -117,12 +134,15 @@ namespace POE_PART1
                     break;
                 }
 
-                Console.Write("Quantity (grams/ml): "); // here we need to make it so that a user can enter a number and specify the scale afterward. such as 1 cup, 3 teaspoons. etc
+                Console.Write("Quantity: "); // here we need to make it so that a user can enter a number and specify the scale afterward. such as 1 cup, 3 teaspoons. etc
                 if (!double.TryParse(Console.ReadLine(), out double quantity))
                 {
                     Console.WriteLine("Invalid input for quantity. Please enter a valid number.");
                     continue;
                 }
+
+                Console.Write("Unit of Measure: ");
+                string unitOfMeasure = Console.ReadLine();
 
                 // Capitalize the first letter of the ingredient // String manipulation
                 ingredient = char.ToUpper(ingredient[0]) + ingredient.Substring(1).ToLower();
@@ -130,19 +150,25 @@ namespace POE_PART1
                 // Add the ingredient and its quantity to the lists
                 ingredientsList.Add(ingredient);
                 quantitiesList.Add(quantity);
+                unitOfMeasureList.Add(unitOfMeasure);
             }
 
             // Convert lists to arrays
             Ingredients = ingredientsList.ToArray();
             Quantities = quantitiesList.ToArray();
+            unitOfMeasure = unitOfMeasureList.ToArray();
             originalQuantities = Quantities.Clone() as double[]; // store oringal values to be used for reset (scaling)
 
             if (Quantities.Length != Ingredients.Length)
             {
-                Console.WriteLine("Invalid input. Number of quantities must match number of ingredients.");
+                Console.WriteLine("Invalid input. Number of quantities, ingredients, and unit of measure must match.");
                 return;
             }
+        }
+        public void getSteps()
+        {
 
+        
             Console.WriteLine("\nHow many steps does your recipe have?");
             int numSteps = 0;
             if (!int.TryParse(Console.ReadLine(), out numSteps))
@@ -168,7 +194,7 @@ namespace POE_PART1
 
             for (int i = 0; i < Ingredients.Length; i++)
             {
-                Console.WriteLine($"{Ingredients[i]} - {Quantities[i]}g");
+                Console.WriteLine($"{Quantities[i]} {unitOfMeasure[i]} of {Ingredients[i]}");
             }
 
             Console.WriteLine("Steps:");
@@ -188,6 +214,7 @@ namespace POE_PART1
             Console.WriteLine("3 - Triple scale (3)");
             Console.WriteLine("4 - Half scale (0.5)");
             Console.WriteLine("5 - Reset scale to default (1)");
+
             //if  need to add a system where if no recipe is entered, then no scaling options can be selected
             if (recipeEntered == true)
             {
@@ -259,11 +286,14 @@ namespace POE_PART1
 }
 
 
-//read list
-// seperate into different classes ( different pages)
-// to add 
-// priority developement: (top down)
-// a system where it takes the grams/ ml and gives a answer such as 250ml/g = a cup, or where 25ml a table spoon, etc 
-// automatic properties to solve a problem (scale? ) 
-// separate classes onto diffrent 'pages'
-// reference
+
+//TO DO
+//reference
+//remove lists and use normal arrays
+//github tag called part1 
+//double check error handling 
+//can add a method where it calculates a common unit of measure. where teaspoons and grams can become cups or ml or something 
+// array size is managed well - resize arrays or ask for an amount of ingrediants first
+// readme file explaining everything 
+// code structure and comments are good 
+// automatic properties?
