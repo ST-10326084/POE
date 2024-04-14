@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace POE_PART1
@@ -9,8 +10,12 @@ namespace POE_PART1
     {
         private static void Main(string[] args)
         {
+            name name = new name();
+            name.Age();
+
             Recipe recipe = new Recipe();
             recipe.Menu();
+            
         }
     }
 
