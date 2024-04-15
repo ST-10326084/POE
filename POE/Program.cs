@@ -19,17 +19,18 @@ namespace POE_PART1
     class Recipe
     {
         // Arrays for all values in the recipe
-        public string RecipeName { get; set; }
-        public string[] Ingredients { get; set; }
-        public string[] Steps { get; set; }
+        public string RecipeName { get; set; } // stores the recipe name
+        public string[] Ingredients { get; set; } // stores the recipe ingredients
+        public string[] Steps { get; set; } // stores the recipe steps
         private double[] originalQuantities; // Keep original quantities for scaling
-        public double[] Quantities { get; set; }
-        public string[] unitOfMeasure { get; set; } 
+        public double[] Quantities { get; set; } // stores the recipe quantities
+        public string[] unitOfMeasure { get; set; } // stores the recipe unit of measurement
         private bool recipeEntered = false; // ensure user doesnt overwrite their recipe.
         private int ingredientCount; // capture amount of ingrediants stored, used for dynamic array size, will be removed once arraylists are added
 
         public Recipe()
         {
+            // initialize arrays
             Ingredients = new string[0];
             Steps = new string[0];
             Quantities = new double[0];
@@ -43,7 +44,7 @@ namespace POE_PART1
             do
             {
                 Console.WriteLine("\x1b[34mWelcome to DoorNo's, the best recipe storage app ever made\x1b[0m");
-                //Console.WriteLine("Welcome to DoorNo's, the best recipe storage app ever made");
+               
                 Console.WriteLine("Our goal is to help you stop spending your hard earned money on takeaways, and teach you how to cook.\n");
 
                 Console.WriteLine("Enter 1 to Enter a recipe\n" +
@@ -55,7 +56,7 @@ namespace POE_PART1
                 try
                 {
                     choice = Convert.ToInt32(Console.ReadLine());
-                    switch (choice)
+                    switch (choice) // swicth is a decent way to have a user choose the path of entry into the program, once guis are introduced, this can be cleaned up
                     {
                         case 1:
                             if (!recipeEntered)
@@ -102,7 +103,7 @@ namespace POE_PART1
             Console.WriteLine("\nWhat is the name of your recipe?");
             RecipeName = Console.ReadLine();
 
-            while (string.IsNullOrEmpty(RecipeName))
+            while (string.IsNullOrEmpty(RecipeName)) 
             {
                 Console.WriteLine("Enter a recipe name");
                 RecipeName = Console.ReadLine();
@@ -110,7 +111,7 @@ namespace POE_PART1
 
             // Get ingredients
             getIngrediants();
-            Console.WriteLine("Ingredients captured. Press any key to continue...");
+            Console.WriteLine("Ingredients captured. Press any key to continue..."); // make users acknowlege that they have entered all recipe ingrediants
             Console.ReadKey(true);
 
             // Get steps
@@ -120,6 +121,8 @@ namespace POE_PART1
 
         public void getIngrediants()
         {
+            // this method becomes significantly better when arraylists and lists are introduced, was not allowed to be used here according to lecturer
+
             const int initialCapacity = 5; // Initial capacity for arrays to make them dynamic 
             int ingredientCount = 0; // Tracks the number of ingredients entered
 
@@ -182,10 +185,10 @@ namespace POE_PART1
             Array.Copy(tempUnitOfMeasure, unitOfMeasure, ingredientCount);
             Array.Copy(tempQuantities, originalQuantities, ingredientCount); // Copy quantities to originalQuantities
         }
+
         public void getSteps()
         {
-
-        
+     
             Console.WriteLine("\nHow many steps does your recipe have?");
             int numSteps = 0;
             if (!int.TryParse(Console.ReadLine(), out numSteps))
@@ -204,7 +207,7 @@ namespace POE_PART1
 
         public void displayRecipe()
         {
-            
+            // display method to show the user what they have typed
             Console.WriteLine("\x1b[34m-------------------------------\x1b[0m"); 
             Console.WriteLine($"Recipe Name: {RecipeName}");
             Console.WriteLine("Ingredients:");
@@ -220,7 +223,7 @@ namespace POE_PART1
                 Console.WriteLine(i + 1 + ") " + Steps[i]);
             }
             Console.WriteLine();
-            Console.WriteLine("\x1b[34m-------------------------------\x1b[0m");
+            Console.WriteLine("\x1b[34m-------------------------------\x1b[0m"); // colour to ensure display is readable and neat. stands out from other text in console
         }
 
         public void scaleRecipe()
@@ -232,7 +235,7 @@ namespace POE_PART1
             Console.WriteLine("4 - Half scale (0.5)");
             Console.WriteLine("5 - Reset scale to default (1)");
 
-            //if  need to add a system where if no recipe is entered, then no scaling options can be selected
+            // ensure a recipe has been entered
             if (recipeEntered == true)
             {
                 try
@@ -242,7 +245,7 @@ namespace POE_PART1
                     {
                         case 1:
                             // Reset quantities to original values
-                            Quantities = originalQuantities.Clone() as double[];
+                            Quantities = originalQuantities.Clone() as double[]; // could remove 1 or 5, as scaling by 1 or resetting is the same thing 
                             break;
                         case 2:
                             scaleIngredients(2); // Double scale
@@ -284,12 +287,12 @@ namespace POE_PART1
             String choice;
             Console.WriteLine("Are you sure you want to clear a recipe, type 'yes' to clear");
             choice = Console.ReadLine();
-            choice = choice.ToLower();
+            choice = choice.ToLower(); // ensures its not case sensitive
+
             if (choice == "yes")
             {
                 Console.WriteLine("\u001b[32mAll data cleared from recipe.\n\u001b[0m");
-                // add a confirmation here to ensure they want to clear the text ( simple if 
-
+                
                 RecipeName = "";
                 Ingredients = new string[0];
                 Steps = new string[0];
@@ -301,18 +304,3 @@ namespace POE_PART1
         }
     }
 }
-
-
-
-//TO DO
-//reference
-
-//github tag called part1 
-//double check error handling 
-//can add a method where it calculates a common unit of measure. where teaspoons and grams can become cups or ml or something 
-
-// readme file explaining everything 
-// code structure and comments are good 
-// automatic properties?
-
-
