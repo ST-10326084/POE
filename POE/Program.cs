@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace POE_PART1
 {
@@ -7,43 +8,75 @@ namespace POE_PART1
     {
         private static void Main(string[] args)
         {
-            Recipe recipe = new Recipe();
+            RecipeBook recipeBook = new RecipeBook();
 
             // Subscribe to the OnHighCalories event
-            recipe.OnHighCalories += (message) => Console.WriteLine(message);
+            recipeBook.OnHighCalories += message => Console.WriteLine(message); // reference this
 
-            recipe.Menu();
+            recipeBook.Menu();
         }
     }
 
-    class Recipe
+    class RecipeBook
     {
-        public List<string> RecipeName { get; set; } // stores the recipe name
-        public List<string> Ingredients { get; set; } // stores the recipe ingredients
-        public List<string> Steps { get; set; } // stores the recipe steps
-        private List<double> OriginalQuantities { get; set; } // Keep original quantities for scaling
-        public List<double> Quantities { get; set; } // stores the recipe quantities
-        public List<string> UnitOfMeasure { get; set; } // stores the recipe unit of measurement
-        public List<double> Calories { get; set; } // New list for storing calories per ingredient
-        public List<string> FoodGroups { get; set; } // New list for storing food groups per ingredient
-        private bool recipeEntered = false; // ensure user doesn't overwrite their recipe
-
-
-        // Define a delegate for calorie notifications
+        // Delegate and event for calorie notifications
         public delegate void CalorieNotificationHandler(string message);
         public event CalorieNotificationHandler OnHighCalories;
 
-        public Recipe()
+        // Store multiple recipes in a list
+        private List<Recipe> recipes;
+
+        public RecipeBook()
         {
-            // initialize lists
-            RecipeName = new List<string>();
-            Ingredients = new List<string>();
-            Steps = new List<string>();
-            Quantities = new List<double>();
-            UnitOfMeasure = new List<string>();
-            OriginalQuantities = new List<double>();
-            Calories = new List<double>(); 
-            FoodGroups = new List<string>();
+            recipes = new List<Recipe>();
+
+            InitializePredefinedRecipes();
+        }
+        private void InitializePredefinedRecipes()
+        {
+            // Hardcode a couple of recipes into the system
+
+            // First Recipe: Spaghetti Bolognese
+            var spaghettiBolognese = new Recipe("Spaghetti Bolognese");
+            spaghettiBolognese.Ingredients.Add("Spaghetti");
+            spaghettiBolognese.Quantities.Add(200);
+            spaghettiBolognese.UnitOfMeasure.Add("grams");
+            spaghettiBolognese.Calories.Add(350); 
+            spaghettiBolognese.FoodGroups.Add("Carbohydrates");
+
+            spaghettiBolognese.Ingredients.Add("Ground Beef");
+            spaghettiBolognese.Quantities.Add(250);
+            spaghettiBolognese.UnitOfMeasure.Add("grams");
+            spaghettiBolognese.Calories.Add(250);
+            spaghettiBolognese.FoodGroups.Add("Proteins");
+
+            spaghettiBolognese.Steps.Add("Boil spaghetti until al dente.");
+            spaghettiBolognese.Steps.Add("Cook ground beef with seasoning.");
+            spaghettiBolognese.Steps.Add("Mix spaghetti with beef and tomato sauce.");
+            spaghettiBolognese.Steps.Add("Serve with grated cheese.");
+
+            recipes.Add(spaghettiBolognese); 
+
+            // Second Recipe: Caesar Salad
+            var caesarSalad = new Recipe("Caesar Salad");
+            caesarSalad.Ingredients.Add("Romaine Lettuce");
+            caesarSalad.Quantities.Add(100);
+            caesarSalad.UnitOfMeasure.Add("grams");
+            caesarSalad.Calories.Add(20); 
+            caesarSalad.FoodGroups.Add("Vegetables");
+
+            caesarSalad.Ingredients.Add("Caesar Dressing");
+            caesarSalad.Quantities.Add(50);
+            caesarSalad.UnitOfMeasure.Add("grams");
+            caesarSalad.Calories.Add(180); 
+            caesarSalad.FoodGroups.Add("Fats");
+
+            caesarSalad.Steps.Add("Tear lettuce into pieces.");
+            caesarSalad.Steps.Add("Add Caesar dressing and mix.");
+            caesarSalad.Steps.Add("Add croutons and Parmesan cheese.");
+            caesarSalad.Steps.Add("Serve chilled.");
+
+            recipes.Add(caesarSalad); 
         }
 
         public void Menu()
@@ -53,31 +86,31 @@ namespace POE_PART1
             do
             {
                 Console.WriteLine("\x1b[34m\nWelcome to DoorNo's, the best recipe storage app ever made\x1b[0m");
-
-                Console.WriteLine("Our goal is to help you stop spending your hard earned money on takeaways, and teach you how to cook.\n");
+                Console.WriteLine("Our goal is to help you stop spending your hard-earned money on takeaways, and teach you how to cook.\n");
 
                 Console.WriteLine("Enter 1 to Enter a recipe\n" +
                                   "Enter 2 to Display a recipe\n" +
-                                  "Enter 3 to Adjust the scale of the recipe\n" +
-                                  "Enter 4 to Clear all data and enter a new recipe\n" +
+                                  "Enter 3 to Adjust the scale of a recipe\n" +
+                                  "Enter 4 to Clear a specific recipe\n" +
                                   "Enter 9 to Exit");
 
                 try
                 {
                     choice = Convert.ToInt32(Console.ReadLine());
-                    switch (choice) // switch is a decent way to have a user choose the path of entry into the program, once guis are introduced, this can be cleaned up
+
+                    switch (choice)
                     {
                         case 1:
-                            GetRecipe();
+                            AddRecipe();
                             break;
                         case 2:
-                            displayRecipe();
+                            DisplayRecipe();
                             break;
                         case 3:
-                            scaleRecipe();
+                            ScaleRecipe();
                             break;
                         case 4:
-                            clearRecipe();
+                            ClearRecipe();
                             break;
                         case 9:
                             Console.WriteLine("Exiting...");
@@ -94,40 +127,179 @@ namespace POE_PART1
             } while (choice != 9);
         }
 
-        public void GetRecipe()
+        private void AddRecipe()
         {
-            Console.WriteLine("What is the name of your recipe?");
+            Console.WriteLine("Enter the recipe name:");
+            string recipeName = Console.ReadLine();
 
-            string newRecipeName = Console.ReadLine(); // to ensure that new recipes are not duplicates, and to ensure they are not empty
-
-            while (string.IsNullOrEmpty(newRecipeName))
+            if (string.IsNullOrEmpty(recipeName))
             {
-                Console.WriteLine("Please enter a recipe name:");
-                newRecipeName = Console.ReadLine();
-            }
-
-            if (RecipeName.Contains(newRecipeName))
-            {
-                Console.WriteLine($"The recipe '{newRecipeName}' already exists. Please use a different name.");
+                Console.WriteLine("Recipe name cannot be empty.");
                 return;
             }
 
-            RecipeName.Add(newRecipeName);
+            // Check for duplicate recipe names
+            if (recipes.Any(r => r.Name.Equals(recipeName, StringComparison.OrdinalIgnoreCase)))
+            {
+                Console.WriteLine($"The recipe '{recipeName}' already exists. Choose a different name.");
+                return;
+            }
 
-            // Get ingredients
-            GetIngredients();
-            Console.WriteLine("Ingredients captured. Press any key to continue...");
-            Console.ReadKey();
+            var newRecipe = new Recipe(recipeName);
+            newRecipe.GetIngredients();
+            newRecipe.GetSteps();
 
-            // Get steps
-            GetSteps();
-            Console.WriteLine("Steps captured.");
+            recipes.Add(newRecipe);
+
+            Console.WriteLine($"Recipe '{recipeName}' added successfully.");
         }
 
+        private void DisplayRecipe()
+        {
+            if (recipes.Count == 0)
+            {
+                Console.WriteLine("No recipes available.");
+                return;
+            }
+
+            // Sort recipes alphabetically by name
+            var sortedRecipes = recipes.OrderBy(r => r.Name).ToList();
+
+            // Display all available recipe names for selection
+            Console.WriteLine("Available Recipes:");
+            for (int i = 0; i < sortedRecipes.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}: {sortedRecipes[i].Name}");
+            }
+
+            Console.Write("Select a recipe to display (enter the corresponding number): ");
+            if (!int.TryParse(Console.ReadLine(), out int recipeIndex) || recipeIndex < 1 || recipeIndex > sortedRecipes.Count)
+            {
+                Console.WriteLine("Invalid selection. Please enter a valid number.");
+                return;
+            }
+
+            // Retrieve the selected recipe
+            var selectedRecipe = sortedRecipes[recipeIndex - 1];
+
+            // Calculate total calories for the selected recipe
+            double totalCalories = selectedRecipe.CalculateTotalCalories();
+
+            if (totalCalories > 300) // If total calories exceed 300, trigger the event
+            {
+                OnHighCalories?.Invoke($"\x1b[31mWarning: Recipe '{selectedRecipe.Name}' exceeds 300 calories with a total of {totalCalories} calories.\x1b[0m");
+
+            }
+
+            selectedRecipe.Display(); // Display the recipe
+        }
+
+        private void ScaleRecipe()
+        {
+            if (recipes.Count == 0)
+            {
+                Console.WriteLine("No recipes available to scale.");
+                return;
+            }
+
+            // Sort recipes and ask which one to scale
+            var sortedRecipes = recipes.OrderBy(r => r.Name).ToList();
+
+            Console.WriteLine("Available Recipes:");
+            for (int i = 0; i < sortedRecipes.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}: {sortedRecipes[i].Name}");
+            }
+
+            Console.Write("Select a recipe to scale (enter the corresponding number): ");
+            if (!int.TryParse(Console.ReadLine(), out int recipeIndex) || recipeIndex < 1 || recipeIndex > sortedRecipes.Count)
+            {
+                Console.WriteLine("Invalid selection. Please enter a valid number.");
+                return;
+            }
+
+            var selectedRecipe = sortedRecipes[recipeIndex - 1]; // Adjusted for 0-based index
+
+            Console.WriteLine("Enter the scale factor (e.g., 0.5 for half scale, 2 for double scale, 1 to reset to original quantities):");
+            if (!double.TryParse(Console.ReadLine(), out double scaleFactor))
+            {
+                Console.WriteLine("Invalid input. Please enter a valid number.");
+                return;
+            }
+
+            if (scaleFactor == 1) // Reset to original values
+            {
+                selectedRecipe.ResetToOriginal(); // Reset method to restore original quantities and calories
+                Console.WriteLine($"Recipe '{selectedRecipe.Name}' has been reset to original values.");
+            }
+            else
+            {
+                selectedRecipe.Scale(scaleFactor); // Scale with given factor
+                Console.WriteLine($"Recipe '{selectedRecipe.Name}' has been scaled by a factor of {scaleFactor}.");
+            }
+        }
+
+        private void ClearRecipe()
+        {
+            if (recipes.Count == 0)
+            {
+                Console.WriteLine("No recipes available to clear.");
+                return;
+            }
+
+            // Sort recipes and ask which one to clear
+            var sortedRecipes = recipes.OrderBy(r => r.Name).ToList();
+
+            Console.WriteLine("Available Recipes:");
+            for (int i = 0; i < sortedRecipes.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}: {sortedRecipes[i].Name}"); 
+            }
+
+            Console.Write("Select a recipe to clear (enter the corresponding number): ");
+            if (!int.TryParse(Console.ReadLine(), out int recipeIndex) || recipeIndex < 1 || recipeIndex > sortedRecipes.Count)
+            {
+                Console.WriteLine("Invalid selection. Please enter a valid number.");
+                return;
+            }
+
+            
+            var recipeToDelete = sortedRecipes[recipeIndex - 1]; 
+
+            recipes.Remove(recipeToDelete); 
+
+            Console.WriteLine($"Recipe '{recipeToDelete.Name}' cleared successfully.");
+        }
+    }
+
+    class Recipe
+    {
+        public string Name { get; set; }
+        public List<string> Ingredients { get; set; }
+        public List<double> Quantities { get; set; }
+        public List<string> UnitOfMeasure { get; set; }
+        public List<double> Calories { get; set; }
+        public List<string> FoodGroups { get; set; }
+        public List<string> Steps { get; set; }
+        public List<double> OriginalQuantities { get; set; }
+        public List<double> OriginalCalories { get; set; }
+
+        public Recipe(string name)
+        {
+            Name = name;
+            Ingredients = new List<string>();
+            Quantities = new List<double>();
+            UnitOfMeasure = new List<string>();
+            OriginalQuantities = new List<double>();
+            OriginalCalories = new List<double>();
+            Calories = new List<double>();
+            FoodGroups = new List<string>();
+            Steps = new List<string>();
+        }
 
         public void GetIngredients()
         {
-            Console.WriteLine("Enter ingredients, quantities, and units of measurement. Type 'done' to finish.");
+            Console.WriteLine("Enter ingredients, quantities, units of measurement, calories, and food groups. Type 'done' to finish.");
 
             while (true)
             {
@@ -142,125 +314,76 @@ namespace POE_PART1
                 Console.Write("Quantity: ");
                 if (!double.TryParse(Console.ReadLine(), out double quantity))
                 {
-                    Console.WriteLine("Invalid input for quantity. Please enter a valid number.");
-                    continue;
+                    Console.WriteLine("Invalid input. Please enter a valid number.");
+                    continue; // need to store quanity in backup variable here, so that we can use the orignal value for resetting scale
                 }
 
                 Console.Write("Unit of Measure: ");
-                string units = Console.ReadLine();
+                string unitOfMeasure = Console.ReadLine();
 
-                Console.Write("Calories: "); // New prompt for calories
+                Console.Write("Calories: "); // Prompt for calories
                 if (!double.TryParse(Console.ReadLine(), out double calories))
                 {
                     Console.WriteLine("Invalid input for calories. Please enter a valid number.");
                     continue;
                 }
 
-                Console.Write("Food Group: "); // New prompt for food group
+                Console.Write("Food Group: "); // Prompt for food group
                 string foodGroup = Console.ReadLine();
 
                 Ingredients.Add(ingredient);
                 Quantities.Add(quantity);
                 OriginalQuantities.Add(quantity);
-                UnitOfMeasure.Add(units);
+                UnitOfMeasure.Add(unitOfMeasure);
                 Calories.Add(calories);
-                FoodGroups.Add(foodGroup); 
-
-                // add calories here 
-                // prompt users for calories, use a delegate to alert if over 300 cal.
-                // need to display in the display method the total calories per recipe.
-
-                // add a food group here
-                // prompt user for food group
-
-                
+                FoodGroups.Add(foodGroup);
             }
         }
 
         public void GetSteps()
         {
-            Console.WriteLine("How many steps does your recipe have?");
-            if (!int.TryParse(Console.ReadLine(), out int numSteps))
+            Console.WriteLine("Enter the number of steps in your recipe:");
+            if (!int.TryParse(Console.ReadLine(), out int stepCount))
             {
                 Console.WriteLine("Invalid input. Please enter a valid number.");
                 return;
             }
 
-            Steps = new List<string>(numSteps);
-            for (int i = 0; i < numSteps; i++)
+            for (int i = 0; i < stepCount; i++)
             {
                 Console.WriteLine($"Enter step {i + 1}:");
                 Steps.Add(Console.ReadLine());
             }
         }
-        /*
-        public void displayRecipe()
+
+        public double CalculateTotalCalories()
         {
+            double totalCalories = 0;
 
-            // allow unlimited recipes now, user must select what recipe they want to see. organise recipes by alphabetical order
-            // use a delegate to notify user if above 300 calories
-            // create unit test to test the calorie calculation works. best done in a seperate method
-
-            // display method to show the user what they have typed
-            Console.WriteLine("\x1b[34m-------------------------------\x1b[0m");
-            Console.WriteLine($"Recipe Name: {RecipeName}");
-            Console.WriteLine("Ingredients:");
-
-            for (int i = 0; i < Ingredients.Count; i++)
+            for (int i = 0; i < Calories.Count; i++)
             {
-                Console.WriteLine($"{Quantities[i]} {UnitOfMeasure[i]} of {Ingredients[i]}");
+                totalCalories += Calories[i]; // Add calorie value for each ingredient
             }
 
-            Console.WriteLine("Steps:");
-            for (int i = 0; i < Steps.Count; i++)
-            {
-                Console.WriteLine(i + 1 + ") " + Steps[i]);
-            }
-            Console.WriteLine();
-            Console.WriteLine("\x1b[34m-------------------------------\x1b[0m"); // colour to ensure display is readable and neat. stands out from other text in console
+            return totalCalories;
         }
-        */
-        public void displayRecipe()
+
+        public void Display()
         {
-            if (RecipeName.Count == 0)
-            {
-                Console.WriteLine("No recipes available.");
-                return;
-            }
-
-            // Sort recipes alphabetically
-            List<string> sortedRecipeNames = RecipeName.OrderBy(name => name).ToList();
-
-            // Display all available recipe names
-            Console.WriteLine("Available Recipes:");
-            for (int i = 0; i < sortedRecipeNames.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}: {sortedRecipeNames[i]}");
-            }
-
-            Console.Write("Select a recipe to display (enter the corresponding number): ");
-            if (!int.TryParse(Console.ReadLine(), out int recipeIndex) || recipeIndex < 1 || recipeIndex > sortedRecipeNames.Count)
-            {
-                Console.WriteLine("Invalid selection. Please enter a valid number.");
-                return;
-            }
-
-            // Find the recipe to display
-            string selectedRecipeName = sortedRecipeNames[recipeIndex - 1];
-            int recipeIdx = RecipeName.IndexOf(selectedRecipeName);
-
-            // Calculate total calories
-            double totalCalories = Calories.Sum();
-
-            if (totalCalories > 300) // If total calories exceed 300, trigger the event
-            {
-                OnHighCalories?.Invoke($"Warning: Recipe '{selectedRecipeName}' exceeds 300 calories with a total of {totalCalories} calories.");
-            }
-
             Console.WriteLine("\x1b[34m-------------------------------\x1b[0m");
-            Console.WriteLine($"Recipe Name: {selectedRecipeName}");
-            Console.WriteLine("Ingredients:");
+            Console.WriteLine($"Recipe Name: {Name}");
 
+            // Check if all lists have the same count
+            if (Ingredients.Count != Quantities.Count ||
+                Ingredients.Count != UnitOfMeasure.Count ||
+                Ingredients.Count != Calories.Count ||
+                Ingredients.Count != FoodGroups.Count)
+            {
+                Console.WriteLine("Error: Mismatch in list lengths. Please check your recipe data.");
+                return; // Exit if there's an inconsistency in list lengths
+            }
+
+            Console.WriteLine("Ingredients:");
             for (int i = 0; i < Ingredients.Count; i++)
             {
                 Console.WriteLine($"{Quantities[i]} {UnitOfMeasure[i]} of {Ingredients[i]} ({Calories[i]} calories, {FoodGroups[i]} food group)");
@@ -276,85 +399,31 @@ namespace POE_PART1
             Console.WriteLine("\x1b[34m-------------------------------\x1b[0m");
         }
 
-        public void scaleRecipe()
+
+        public void Scale(double factor)
         {
-            Console.WriteLine("\nEnter the scale at which you would like to adjust the recipe:");
-            Console.WriteLine("1 - Default scale (1)");
-            Console.WriteLine("2 - Double scale (2)");
-            Console.WriteLine("3 - Triple scale (3)");
-            Console.WriteLine("4 - Half scale (0.5)");
-            Console.WriteLine("5 - Reset scale to default (1)");
-
-            if (recipeEntered)
+            // Make sure all lists are scaled consistently
+            for (int i = 0; i < Ingredients.Count; i++)
             {
-                try
-                {
-                    double factor = Convert.ToDouble(Console.ReadLine());
-
-                    switch (factor)
-                    {
-                        case 1:
-                        case 5:
-                            // Reset quantities to original values
-                            Quantities = new List<double>(OriginalQuantities); // Use constructor to copy list
-                            break;
-                        case 2:
-                            scaleIngredients(2); // Double scale
-                            break;
-                        case 3:
-                            scaleIngredients(3); // Triple scale
-                            break;
-                        case 4:
-                            scaleIngredients(0.5); // Half scale
-                            break;
-                        default:
-                            Console.WriteLine("Invalid choice. Please enter a valid option.");
-                            break;
-                    }
-                }
-                catch (FormatException)
-                {
-                    Console.WriteLine("Invalid input. Please enter a valid number.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Enter a recipe before trying to scale it.");
-            }
-        } 
-
-        private void scaleIngredients(double factor)
-        {
-            for (int i = 0; i < Quantities.Count; i++)
-            {
-                Quantities[i] *= factor; // Scale each quantity
+                if (i < Quantities.Count) Quantities[i] *= factor; // Scale quantity
+                if (i < Calories.Count) Calories[i] *= factor; // Scale calories
             }
         }
 
-        public void clearRecipe()
+        public void ResetToOriginal() // this method isnt working. values are not being reset
         {
-            String choice;
-            Console.WriteLine("Are you sure you want to clear a recipe, type 'yes' to clear");
-            choice = Console.ReadLine();
-            choice = choice.ToLower(); // ensures its not case sensitive
-
-            if (choice == "yes")
+            // Reset all related lists to their original values
+            if (OriginalQuantities.Count == Quantities.Count)
             {
-                Console.WriteLine("\u001b[32mAll data cleared from recipe.\n\u001b[0m");
-                // need to ask what recipe they want to clear in the array.
-                // and only delete that one, not the whole array
-                /*RecipeName = "";
-                Ingredients = new string[0];
-                Steps = new string[0];
-                Quantities = new double[0]; // Reset quantities\
-                // NEED TO CLEAR A SPECIFIC INDEX, cant just reset the whole list
-                Quantities.Clear();
-                */
+                Quantities = new List<double>(OriginalQuantities); // Reset quantities
             }
-            else
+
+            if (OriginalCalories.Count == Calories.Count)
             {
-                Console.WriteLine("\u001b[31mYour recipe was NOT cleared, enter 'yes' to clear\n\u001b[0m");
+                Calories = new List<double>(OriginalCalories); // Reset calories
             }
         }
     }
 }
+// bug - when i clicked clear recipe, i choose 1, yet option 2 was deleted. investigate
+// add to the scale the option to reset back to original values
