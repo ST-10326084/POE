@@ -1,28 +1,47 @@
 namespace POE_PART1
 {
-    class Recipe
+    public class Ingredient
     {
         public string Name { get; set; }
-        public List<string> Ingredients { get; set; }
-        public List<double> Quantities { get; set; }
-        public List<string> UnitOfMeasure { get; set; }
-        public List<double> Calories { get; set; }
-        public List<string> FoodGroups { get; set; }
+        public double Quantity { get; set; }
+        public string UnitOfMeasure { get; set; }
+        public double Calories { get; set; }
+        public string FoodGroup { get; set; }
+
+        public Ingredient(string name, double quantity, string unitOfMeasure, double calories, string foodGroup)
+        {
+            Name = name;
+            Quantity = quantity;
+            UnitOfMeasure = unitOfMeasure;
+            Calories = calories;
+            FoodGroup = foodGroup;
+        }
+
+        public Ingredient Clone()
+        {
+            return new Ingredient(Name, Quantity, UnitOfMeasure, Calories, FoodGroup);
+        }
+    }
+
+    public class Recipe
+    {
+        public string Name { get; set; }
+        public List<Ingredient> Ingredients { get; set; }
         public List<string> Steps { get; set; }
-        public List<double> OriginalQuantities { get; set; }
-        public List<double> OriginalCalories { get; set; }
+        private List<Ingredient> OriginalIngredients { get; set; }
 
         public Recipe(string name)
         {
             Name = name;
-            Ingredients = new List<string>();
-            Quantities = new List<double>();
-            UnitOfMeasure = new List<string>();
-            OriginalQuantities = new List<double>();
-            OriginalCalories = new List<double>();
-            Calories = new List<double>();
-            FoodGroups = new List<string>();
+            Ingredients = new List<Ingredient>();
             Steps = new List<string>();
+            OriginalIngredients = new List<Ingredient>();
+        }
+
+        public void AddIngredient(Ingredient ingredient)
+        {
+            Ingredients.Add(ingredient);
+            OriginalIngredients.Add(ingredient.Clone());
         }
 
         public void GetIngredients()
@@ -32,39 +51,22 @@ namespace POE_PART1
             while (true)
             {
                 Console.Write("Ingredient: ");
-                string ingredient = Console.ReadLine();
-
-                if (string.Equals(ingredient, "done", StringComparison.OrdinalIgnoreCase))
-                {
-                    break;
-                }
+                string ingredientName = Console.ReadLine();
+                if (string.Equals(ingredientName, "done", StringComparison.OrdinalIgnoreCase)) break;
 
                 Console.Write("Quantity: ");
-                if (!double.TryParse(Console.ReadLine(), out double quantity))
-                {
-                    Console.WriteLine("Invalid input. Please enter a valid number.");
-                    continue; // need to store quanity in backup variable here, so that we can use the orignal value for resetting scale
-                }
+                double quantity = double.Parse(Console.ReadLine());
 
                 Console.Write("Unit of Measure: ");
                 string unitOfMeasure = Console.ReadLine();
 
-                Console.Write("Calories: "); // Prompt for calories
-                if (!double.TryParse(Console.ReadLine(), out double calories))
-                {
-                    Console.WriteLine("Invalid input for calories. Please enter a valid number.");
-                    continue;
-                }
+                Console.Write("Calories: ");
+                double calories = double.Parse(Console.ReadLine());
 
-                Console.Write("Food Group: "); // Prompt for food group
+                Console.Write("Food Group: ");
                 string foodGroup = Console.ReadLine();
 
-                Ingredients.Add(ingredient);
-                Quantities.Add(quantity);
-                OriginalQuantities.Add(quantity);
-                UnitOfMeasure.Add(unitOfMeasure);
-                Calories.Add(calories);
-                FoodGroups.Add(foodGroup);
+                AddIngredient(new Ingredient(ingredientName, quantity, unitOfMeasure, calories, foodGroup));
             }
         }
 
@@ -86,14 +88,7 @@ namespace POE_PART1
 
         public double CalculateTotalCalories()
         {
-            double totalCalories = 0;
-
-            for (int i = 0; i < Calories.Count; i++)
-            {
-                totalCalories += Calories[i]; // Add calorie value for each ingredient
-            }
-
-            return totalCalories;
+            return Ingredients.Sum(ingredient => ingredient.Calories);
         }
 
         public void Display()
@@ -101,20 +96,10 @@ namespace POE_PART1
             Console.WriteLine("\x1b[34m-------------------------------\x1b[0m");
             Console.WriteLine($"Recipe Name: {Name}");
 
-            // Check if all lists have the same count
-            if (Ingredients.Count != Quantities.Count ||
-                Ingredients.Count != UnitOfMeasure.Count ||
-                Ingredients.Count != Calories.Count ||
-                Ingredients.Count != FoodGroups.Count)
-            {
-                Console.WriteLine("Error: Mismatch in list lengths. Please check your recipe data.");
-                return; // Exit if there's an inconsistency in list lengths
-            }
-
             Console.WriteLine("Ingredients:");
-            for (int i = 0; i < Ingredients.Count; i++)
+            foreach (var ingredient in Ingredients)
             {
-                Console.WriteLine($"{Quantities[i]} {UnitOfMeasure[i]} of {Ingredients[i]} ({Calories[i]} calories, {FoodGroups[i]} food group)");
+                Console.WriteLine($"{ingredient.Quantity} {ingredient.UnitOfMeasure} of {ingredient.Name} ({ingredient.Calories} calories, {ingredient.FoodGroup} food group)");
             }
 
             Console.WriteLine("Steps:");
@@ -123,33 +108,23 @@ namespace POE_PART1
                 Console.WriteLine($"{i + 1}: {Steps[i]}");
             }
 
-            Console.WriteLine();
+            Console.WriteLine($"Total Calories: {CalculateTotalCalories()}");
+
             Console.WriteLine("\x1b[34m-------------------------------\x1b[0m");
         }
 
-
         public void Scale(double factor)
         {
-            // Make sure all lists are scaled consistently
-            for (int i = 0; i < Ingredients.Count; i++)
+            foreach (var ingredient in Ingredients)
             {
-                if (i < Quantities.Count) Quantities[i] *= factor; // Scale quantity
-                if (i < Calories.Count) Calories[i] *= factor; // Scale calories
+                ingredient.Quantity *= factor;
+                ingredient.Calories *= factor;
             }
         }
 
-        public void ResetToOriginal() // this method isnt working. values are not being reset
+        public void ResetToOriginal()
         {
-            // Reset all related lists to their original values
-            if (OriginalQuantities.Count == Quantities.Count)
-            {
-                Quantities = new List<double>(OriginalQuantities); // Reset quantities
-            }
-
-            if (OriginalCalories.Count == Calories.Count)
-            {
-                Calories = new List<double>(OriginalCalories); // Reset calories
-            }
+            Ingredients = OriginalIngredients.Select(ingredient => ingredient.Clone()).ToList();
         }
     }
 }

@@ -15,23 +15,16 @@ namespace POE_PART1
 
 			InitializePredefinedRecipes();
 		}
+
 		private void InitializePredefinedRecipes()
 		{
-			// Hardcode a couple of recipes into the system
+			// Hardcode a few recipes into the system so that the user doesnt need to add recipes every time on launch
 
 			// First Recipe: Spaghetti Bolognese
 			var spaghettiBolognese = new Recipe("Spaghetti Bolognese");
-			spaghettiBolognese.Ingredients.Add("Spaghetti");
-			spaghettiBolognese.Quantities.Add(200);
-			spaghettiBolognese.UnitOfMeasure.Add("grams");
-			spaghettiBolognese.Calories.Add(350);
-			spaghettiBolognese.FoodGroups.Add("Carbohydrates");
 
-			spaghettiBolognese.Ingredients.Add("Ground Beef");
-			spaghettiBolognese.Quantities.Add(250);
-			spaghettiBolognese.UnitOfMeasure.Add("grams");
-			spaghettiBolognese.Calories.Add(250);
-			spaghettiBolognese.FoodGroups.Add("Proteins");
+			spaghettiBolognese.AddIngredient(new Ingredient("Spaghetti", 200, "grams", 350, "Carbohydrates"));
+			spaghettiBolognese.AddIngredient(new Ingredient("Ground Beef", 250, "grams", 250, "Proteins"));
 
 			spaghettiBolognese.Steps.Add("Boil spaghetti until al dente.");
 			spaghettiBolognese.Steps.Add("Cook ground beef with seasoning.");
@@ -42,17 +35,9 @@ namespace POE_PART1
 
 			// Second Recipe: Caesar Salad
 			var caesarSalad = new Recipe("Caesar Salad");
-			caesarSalad.Ingredients.Add("Romaine Lettuce");
-			caesarSalad.Quantities.Add(100);
-			caesarSalad.UnitOfMeasure.Add("grams");
-			caesarSalad.Calories.Add(20);
-			caesarSalad.FoodGroups.Add("Vegetables");
 
-			caesarSalad.Ingredients.Add("Caesar Dressing");
-			caesarSalad.Quantities.Add(50);
-			caesarSalad.UnitOfMeasure.Add("grams");
-			caesarSalad.Calories.Add(180);
-			caesarSalad.FoodGroups.Add("Fats");
+			caesarSalad.AddIngredient(new Ingredient("Romaine Lettuce", 100, "grams", 20, "Vegetables"));
+			caesarSalad.AddIngredient(new Ingredient("Caesar Dressing", 50, "grams", 180, "Fats"));
 
 			caesarSalad.Steps.Add("Tear lettuce into pieces.");
 			caesarSalad.Steps.Add("Add Caesar dressing and mix.");
@@ -87,7 +72,7 @@ namespace POE_PART1
 							AddRecipe();
 							break;
 						case 2:
-							DisplayRecipe();
+							DisplayAllRecipe();
 							break;
 						case 3:
 							ScaleRecipe();
@@ -137,7 +122,7 @@ namespace POE_PART1
 			Console.WriteLine($"Recipe '{recipeName}' added successfully.");
 		}
 
-		private void DisplayRecipe()
+		private void DisplayAllRecipe()
 		{
 			if (recipes.Count == 0)
 			{
@@ -246,12 +231,21 @@ namespace POE_PART1
 				return;
 			}
 
-
 			var recipeToDelete = sortedRecipes[recipeIndex - 1];
 
-			recipes.Remove(recipeToDelete);
+			// Confirmation prompt
+			Console.Write($"Are you sure you want to delete the recipe '{recipeToDelete.Name}'? (yes/no): ");
+			string confirmation = Console.ReadLine().Trim().ToLower(); // lowercase, removes spaces
 
-			Console.WriteLine($"Recipe '{recipeToDelete.Name}' cleared successfully.");
+			if (confirmation == "yes" || confirmation == "y")
+			{
+				recipes.Remove(recipeToDelete);
+				Console.WriteLine($"Recipe '{recipeToDelete.Name}' cleared successfully.");
+			}
+			else
+			{
+				Console.WriteLine("Deletion cancelled.");
+			}
 		}
 	}
 }
