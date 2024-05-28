@@ -153,5 +153,4 @@ namespace POE_PART1
         }
     }
 }
-// bug - when i clicked clear recipe, i choose 1, yet option 2 was deleted. investigate
 // add to the scale the option to reset back to original values
