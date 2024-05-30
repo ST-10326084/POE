@@ -1,6 +1,6 @@
 namespace POE_PART1
 {
-	class RecipeBook
+	public class RecipeBook
 	{
 		// Delegate and event for calorie notifications
 		public delegate void CalorieNotificationHandler(string message);
@@ -16,7 +16,7 @@ namespace POE_PART1
 			InitializePredefinedRecipes();
 		}
 
-		private void InitializePredefinedRecipes()
+		internal void InitializePredefinedRecipes()
 		{
 			// Hardcode a few recipes into the system so that the user doesnt need to add recipes every time on launch
 
@@ -47,7 +47,12 @@ namespace POE_PART1
 			recipes.Add(caesarSalad);
 		}
 
-		public void Menu()
+        public List<Recipe> GetRecipes()
+        {
+            return recipes;
+        }
+
+        public void Menu()
 		{
 			int choice = 0;
 
