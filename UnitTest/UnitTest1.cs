@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using POE_PART1;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UnitTest
 {

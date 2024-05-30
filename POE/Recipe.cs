@@ -31,14 +31,36 @@ namespace POE_PART1
                 string ingredientName = Console.ReadLine();
                 if (string.Equals(ingredientName, "done", StringComparison.OrdinalIgnoreCase)) break;
 
-                Console.Write("Quantity: ");
-                double quantity = double.Parse(Console.ReadLine());
+                double quantity;
+                while (true)
+                {
+                    Console.Write("Quantity: ");
+                    if (double.TryParse(Console.ReadLine(), out quantity) && quantity > 0)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid quantity. Please enter a valid number greater than 0.");
+                    }
+                }
 
                 Console.Write("Unit of Measure: ");
                 string unitOfMeasure = Console.ReadLine();
 
-                Console.Write("Calories: ");
-                double calories = double.Parse(Console.ReadLine());
+                double calories;
+                while (true)
+                {
+                    Console.Write("Calories: ");
+                    if (double.TryParse(Console.ReadLine(), out calories) && calories >= 0)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid calories. Please enter a valid number greater than or equal to 0.");
+                    }
+                }
 
                 Console.Write("Food Group: ");
                 string foodGroup = Console.ReadLine();
@@ -74,18 +96,19 @@ namespace POE_PART1
             Console.WriteLine($"Recipe Name: {Name}");
 
             Console.WriteLine("Ingredients:");
+            Console.WriteLine("Name\t\t\tQuantity\tUnit\t\tCalories\tFood Group");
             foreach (var ingredient in Ingredients)
             {
-                Console.WriteLine($"{ingredient.Quantity} {ingredient.UnitOfMeasure} of {ingredient.Name} ({ingredient.Calories} calories, {ingredient.FoodGroup} food group)");
+                Console.WriteLine($"{ingredient.Name}\t\t{ingredient.Quantity}\t\t{ingredient.UnitOfMeasure}\t\t{ingredient.Calories}\t\t{ingredient.FoodGroup}");
             }
 
-            Console.WriteLine("Steps:");
+            Console.WriteLine("\nSteps:");
             for (int i = 0; i < Steps.Count; i++)
             {
                 Console.WriteLine($"{i + 1}: {Steps[i]}");
             }
 
-            Console.WriteLine($"Total Calories: {CalculateTotalCalories()}");
+            Console.WriteLine($"\nTotal Calories: {CalculateTotalCalories()}");
 
             Console.WriteLine("\x1b[34m-------------------------------\x1b[0m");
         }
