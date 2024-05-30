@@ -1,6 +1,6 @@
 namespace POE_PART1
 {
-    public class Ingredient
+    public class Ingredient // handles ingrediants, steps and scale
     {
         public string Name { get; set; }
         public double Quantity { get; set; }

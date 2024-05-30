@@ -11,7 +11,7 @@ namespace POE_PART1
             RecipeBook recipeBook = new RecipeBook();
 
             // Subscribe to the OnHighCalories event
-            recipeBook.OnHighCalories += message => Console.WriteLine(message); // reference this
+            recipeBook.OnHighCalories += message => Console.WriteLine(message); 
 
             recipeBook.Menu();
 

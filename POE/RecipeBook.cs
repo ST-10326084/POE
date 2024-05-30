@@ -66,7 +66,7 @@ namespace POE_PART1
 				{
 					choice = Convert.ToInt32(Console.ReadLine());
 
-					switch (choice)
+					switch (choice) // switch for a menu picker
 					{
 						case 1:
 							AddRecipe();
