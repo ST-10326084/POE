@@ -1,0 +1,18 @@
+#This file contains the 100-200 word feedback report based on the findings of part 1.
+
+#Feedback:
+
+1.	The error handling needs to be improved, when a user enter an invalid value for quantity, the program still prompt the user to capture the ingredient which is not stored. You should allow a user to only capture the quantity and move on.
+2.	You need to create classes on the separate file not in the same file as the program.
+3.	The display can be improved by putting headers and tab once.
+4.	The readme file is not detailed enough to guide the user on how to execute the program, see a readme file as a user manual. (Put not more than 5 screenshots).
+
+# How i have solved these issues
+1) Error handling is more robust (see errorhandling.png) Specifically, quantity and calories.
+2) Classes have been seperated into different files. Program.cs, Ingrediant.cs, RecipeBook.cs etc.
+3) Display has been enhanced by using \n (Skip lines) and \t (tab) to create a better visual display
+4) Readme file has been updated to include information on how to clone a repo and launch the program.
+
+Thank you.
+-Dean
+-ST10326084
