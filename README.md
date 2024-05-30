@@ -1,15 +1,51 @@
-# POE
-This is part 1 of 3. This repo will be updated with part 2 and 3 respectively 
+# POE - Recipe Book Program - This is part 2 of 3. 
+Welcome to the POE - Recipe Book Program, a C# application designed to help you store, manage, and scale your favorite recipes. This guide will walk you through the setup, usage, and features of the program.
 
-Github Link: https://github.com/ST-10326084/POE/tree/7453216b420388e27e5a5afc866da2b5c7f2ce40
+Github Repository
+Find the source code on GitHub: https://github.com/ST-10326084/POE/tree/7453216b420388e27e5a5afc866da2b5c7f2ce40
 
-Youtube Video Link: https://youtu.be/04h38jot0Ao
-_______________________________
+Youtube Links
+Watch a video of part 1 here: https://youtu.be/04h38jot0Ao
+Watch a video of part 2 here: 
 
-Instructions: This file can be run by copying and pasting the code, found in the program.cs file into Microsoft Visual Studio Enterprise or any c# supported IDE. Create a console based application (c#). Copy all code and paste exactly as is. Click run, and use the console, terminal or pop up menu to nagivate the app.
+Overview
+The POE Recipe Book Program allows you to:
 
-OR alternatively, just copy and paste the whole folder into the directory where your IDE stores porject files. Open the IDE, and clikc file - open project, and find the folder.
-_______________________________
+Add new recipes with ingredients and preparation steps.
+Display recipes with detailed ingredient lists and steps.
+Scale recipes up or down and reset them to their original values.
+Receive notifications when a recipe exceeds a specified calorie limit.
+Clear specific recipes from the recipe book.
+Instructions
+Setup and Running the Program
+Clone the Repository:
 
+git clone https://github.com/ST-10326084/POE.git
+cd POE
+Build and Run the Program:
+Ensure you have .NET SDK installed on your system. Build and run the program using the following commands:
 
-Note: my laptop, and computer use my older github account prevousliy named QuantumZA, i have changed the name to DeanGibson-ST10326084, it is still all me, just from visual studio itself and not from github. 
+dotnet build
+dotnet run
+Usage
+
+Launching the Program:
+Upon running the program, you'll be greeted with a welcome message and a menu of options.
+
+Menu Options:
+Enter a Recipe: Add a new recipe by providing its name, ingredients, quantities, units of measurement, calories, and food groups. You will also be prompted to enter the preparation steps.
+Display a Recipe: View a list of all recipes and select one to display its detailed information.
+Adjust the Scale of a Recipe: Scale a recipe by a specified factor (e.g., 0.5 for half, 2 for double). You can also reset the recipe to its original quantities and calories.
+Clear a Specific Recipe: Remove a recipe from the recipe book after a confirmation prompt.
+Exit: Exit the program.
+
+Program Structure
+The program consists of the following main classes:
+
+Program: Entry point of the application, initializes and runs the recipe book menu.
+
+RecipeBook: Manages the collection of recipes, handles user interactions, and provides methods to add, display, scale, and clear recipes.
+
+Recipe: Represents a recipe, contains properties for ingredients and steps, and methods to calculate total calories, display the recipe, scale ingredients, and reset to original quantities.
+
+Ingredient: Represents an ingredient with properties for name, quantity, unit of measure, calories, and food group.
