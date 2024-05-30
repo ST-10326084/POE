@@ -2,11 +2,12 @@
 Welcome to the POE - Recipe Book Program, a C# application designed to help you store, manage, and scale your favorite recipes. This guide will walk you through the setup, usage, and features of the program.
 
 Github Repository
-Find the source code on GitHub: https://github.com/ST-10326084/POE/tree/7453216b420388e27e5a5afc866da2b5c7f2ce40
+Find the source code on GitHub: https://github.com/ST-10326084/POE/tree/Part2
 
 Youtube Links
 Watch a video of part 1 here: https://youtu.be/04h38jot0Ao
-Watch a video of part 2 here: 
+
+Watch a video of part 2 here: https://youtu.be/Kbjwl-Cvwo4
 
 Overview
 The POE Recipe Book Program allows you to:
