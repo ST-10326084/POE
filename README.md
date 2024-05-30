@@ -50,3 +50,5 @@ RecipeBook: Manages the collection of recipes, handles user interactions, and pr
 Recipe: Represents a recipe, contains properties for ingredients and steps, and methods to calculate total calories, display the recipe, scale ingredients, and reset to original quantities.
 
 Ingredient: Represents an ingredient with properties for name, quantity, unit of measure, calories, and food group.
+
+![image](https://github.com/ST-10326084/POE/assets/127187815/b2c83076-1ca5-4676-b7a6-c2a847a6ec30)
